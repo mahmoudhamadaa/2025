@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mahmoud Hamada</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(45deg, #000428, #004e92);
+    font-family: 'Poppins', sans-serif;
+    overflow: hidden;
+}
+
+/* Stars Background */
+.stars {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    background: transparent;
+}
+
+.star {
+    position: absolute;
+    background: #fff;
+    border-radius: 50%;
+    filter: drop-shadow(0 0 10px #fff);
+}
+
+@keyframes twinkle {
+    0%, 100% {
+        opacity: 0.2;
+        transform: scale(0.8);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.2);
+    }
+}
+
+@keyframes shooting-star {
+    0% {
+        transform: translateX(0) translateY(0) rotate(45deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(1000px) translateY(1000px) rotate(45deg);
+        opacity: 0;
+    }
+}
+
+.shooting-star {
+    position: absolute;
+    width: 100px;
+    height: 2px;
+    background: linear-gradient(90deg, #fff, transparent);
+    filter: drop-shadow(0 0 5px #fff);
+}
+
+.holder {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1;
+}
+
+.new-year {
+    text-align: center;
+    padding: 3rem;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.year {
+    font-size: 7em;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    color: #fff;
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+    font-weight: 600;
+}
+
+.digit {
+    display: inline-block;
+    position: relative;
+    opacity: 0;
+    transform: translateY(-100px);
+    margin: 0 5px;
+    background: linear-gradient(45deg, #a7e7ff, #0077ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.controls {
+    margin-top: 40px;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 25px;
+}
+
+.control {
+    padding: 15px 30px;
+    font-size: 1.2em;
+    opacity: 0;
+    position: relative;
+    top: 100px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    color: #fff;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+.control i {
+    margin-right: 10px;
+    font-size: 1.1em;
+}
+
+.control:hover {
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.credit {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.9em;
+    text-decoration: none;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 10px 20px;
+    border-radius: 30px;
+    backdrop-filter: blur(5px);
+    transition: all 0.3s ease;
+    z-index: 2;
+}
+
+.celebration {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.5s;
+    z-index: 1000;
+}
+
+.firework {
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+}
+
+.celebration-text {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 4em;
+    color: #fff;
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+    opacity: 0;
+    z-index: 1001;
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    .year { font-size: 4em; }
+    .controls { flex-direction: column; align-items: center; }
+    .control { width: 200px; text-align: center; }
+    .celebration-text { font-size: 2em; }
+}
+</style>
+<body>
+    <div class="stars"></div>
+    <div class="holder">
+        <div class="new-year"></div>
+    </div>
+    <div class="celebration"></div>
+    <div class="celebration-text"></div>
+    <a href="https://mahmoud-hamada.netlify.app/" class="credit">Created by Mahmoud Hamada</a>
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/2.0.2/TweenMax.min.js"></script>
+<script>
+(function() {
+    // Stars background animation
+    const starsContainer = document.querySelector('.stars');
+    
+    function createStar() {
+        const star = document.createElement('div');
+        star.className = 'star';
+        
+        // Random size between 1 and 4 pixels
+        const size = Math.random() * 3 + 1;
+        star.style.width = `${size}px`;
+        star.style.height = `${size}px`;
+        
+        // Random position
+        star.style.left = `${Math.random() * 100}%`;
+        star.style.top = `${Math.random() * 100}%`;
+        
+        // Random animation duration between 1 and 3 seconds
+        const duration = Math.random() * 2 + 1;
+        star.style.animation = `twinkle ${duration}s infinite`;
+        
+        // Random delay
+        star.style.animationDelay = `${Math.random() * 3}s`;
+        
+        return star;
+    }
+
+    function createShootingStar() {
+        const star = document.createElement('div');
+        star.className = 'shooting-star';
+        
+        // Random starting position
+        star.style.left = `-100px`;
+        star.style.top = `${Math.random() * window.innerHeight}px`;
+        
+        // Animation
+        star.style.animation = 'shooting-star 1s linear forwards';
+        
+        // Remove after animation
+        setTimeout(() => star.remove(), 1000);
+        
+        return star;
+    }
+
+    // Create initial stars
+    for(let i = 0; i < 200; i++) {
+        starsContainer.appendChild(createStar());
+    }
+
+    // Periodically create shooting stars
+    setInterval(() => {
+        if(Math.random() < 0.3) { // 30% chance every interval
+            starsContainer.appendChild(createShootingStar());
+        }
+    }, 2000);
+
+    const animation = {
+        newYear: document.querySelector(".new-year"),
+        celebration: document.querySelector(".celebration"),
+        celebrationText: document.querySelector(".celebration-text"),
+        
+        range: function(min,max) {
+            return Math.floor(Math.random() * (max - min + 1) + min);
+        },
+        
+        get period() {
+            const dateFuture = new Date(new Date().getFullYear() + 1, 0, 1);
+            const dateNow = new Date();
+            const diff = Math.floor((dateFuture - dateNow)/1000);
+            
+            return {
+                year: new Date().getFullYear() + 1,
+                days: Math.floor(diff / (24 * 60 * 60)),
+                hours: Math.floor((diff % (24 * 60 * 60)) / (60 * 60)),
+                minutes: Math.floor((diff % (60 * 60)) / 60),
+                seconds: Math.floor(diff % 60)
+            };
+        },
+        
+        createFirework: function(x, y) {
+            const colors = ['#ff0', '#f0f', '#0ff', '#0f0', '#ff4500'];
+            const particles = 50;
+            const maxSize = 4;
+            
+            for(let i = 0; i < particles; i++) {
+                const firework = document.createElement('div');
+                firework.className = 'firework';
+                firework.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                firework.style.left = x + 'px';
+                firework.style.top = y + 'px';
+                this.celebration.appendChild(firework);
+                
+                const angle = (Math.PI * 2 * i) / particles;
+                const velocity = 2 + Math.random() * 4;
+                const size = 1 + Math.random() * maxSize;
+                
+                firework.style.width = size + 'px';
+                firework.style.height = size + 'px';
+                
+                TweenMax.to(firework, 1 + Math.random(), {
+                    x: Math.cos(angle) * 200 * Math.random(),
+                    y: Math.sin(angle) * 200 * Math.random(),
+                    opacity: 0,
+                    ease: Power2.easeOut,
+                    onComplete: () => firework.remove()
+                });
+            }
+        },
+        
+        startCelebration: function() {
+            this.celebration.style.opacity = 1;
+            this.celebrationText.style.opacity = 1;
+            this.celebrationText.innerHTML = "Happy New Year!<br>By Mahmoud Hamada";
+            
+            const launchFirework = () => {
+                const x = Math.random() * window.innerWidth;
+                const y = Math.random() * window.innerHeight;
+                this.createFirework(x, y);
+            };
+            
+            for(let i = 0; i < 5; i++) {
+                setTimeout(launchFirework, i * 300);
+            }
+            
+            setInterval(launchFirework, 1000);
+        },
+        
+        element: function(parent, type, className, html) {
+            const element = document.createElement(type);
+            element.className = className;
+            if (html !== undefined) element.innerHTML = html;
+            parent.appendChild(element);
+            return element;
+        },
+        
+        year: function(className) {
+            const timeline = new TimelineMax();
+            const year = this.element(this.newYear, "div", className);
+            
+            String(this.period.year).split('').forEach(digit => {
+                const digitElement = this.element(year, "div", "digit", digit);
+                digitElement.style.top = `${-digitElement.clientHeight * 2}px`;
+                timeline.to(digitElement, 0.5, {
+                    top: 0,
+                    opacity: 1,
+                    ease: Bounce.easeOut
+                });
+            });
+            
+            return year;
+        },
+        
+        animate: function() {
+            const year1 = this.year("year");
+            const controls = this.element(this.newYear, "div", "controls");
+            
+            const controlsData = [
+                { unit: 'days', icon: 'fa-calendar-days' },
+                { unit: 'hours', icon: 'fa-clock' },
+                { unit: 'minutes', icon: 'fa-hourglass-half' },
+                { unit: 'seconds', icon: 'fa-stopwatch' }
+            ];
+            
+            const timeControls = controlsData.map(({ unit, icon }) => {
+                const control = this.element(controls, "div", `control ${unit}`);
+                control.innerHTML = `<i class="fas ${icon}"></i>`;
+                return control;
+            });
+            
+            this.controls = {
+                controls,
+                days: timeControls[0],
+                hours: timeControls[1],
+                minutes: timeControls[2],
+                seconds: timeControls[3]
+            };
+            
+            this.render();
+            
+            return new TimelineMax()
+                .staggerTo(timeControls, 0.5, {
+                    top: 0,
+                    opacity: 1
+                }, 0.25);
+        },
+        
+        plural: function(property) {
+            const period = this.period;
+            const value = period[property];
+            const paddedValue = value < 10 ? `0${value}` : value;
+            return `<i class="fas fa-${property === 'days' ? 'calendar-days' : 
+                                     property === 'hours' ? 'clock' :
+                                     property === 'minutes' ? 'hourglass-half' :
+                                     'stopwatch'}"></i> ${paddedValue} ${value === 1 ? property.slice(0, -1) : property}`;
+        },
+        
+        render: function() {
+            Object.entries(this.controls).forEach(([key, element]) => {
+                if (key !== 'controls') {
+                    element.innerHTML = this.plural(key);
+                    
+                    const period = this.period;
+                    if (period.days === 0 && period.hours === 0 && 
+                        period.minutes === 0 && period.seconds === 0) {
+                        this.startCelebration();
+                    }
+                }
+            });
+            requestAnimationFrame(() => this.render());
+        }
+    };
+    
+    animation.animate();
+})();
+</script>
+</html>
